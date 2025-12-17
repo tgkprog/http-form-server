@@ -14,7 +14,25 @@ public class SimpleHttpServer {
     while(true)try(Socket s=ss.accept()){
       ByteArrayOutputStream r=new ByteArrayOutputStream();
       InputStream in=s.getInputStream(); byte[] b=new byte[8192]; int n;
+      
+      // Read headers (until \r\n\r\n)
       while((n=in.read(b))!=-1){r.write(b,0,n);if(r.toString().contains("\r\n\r\n"))break;}
+      
+      // Check if there's a Content-Length header and read the body
+      String headers=r.toString();
+      int contentLength=extractContentLength(headers);
+      if(contentLength>0){
+        int headerEnd=headers.indexOf("\r\n\r\n")+4;
+        int bodyBytesRead=r.size()-headerEnd;
+        int remaining=contentLength-bodyBytesRead;
+        
+        // Read remaining body bytes
+        while(remaining>0\u0026\u0026(n=in.read(b,0,Math.min(b.length,remaining)))!=-1){
+          r.write(b,0,n);
+          remaining-=n;
+        }
+      }
+      
       String req=r.toString();
       String firstLine=req.split("\\r?\\n")[0];
       System.err.println("[REQUEST] "+firstLine);
@@ -66,5 +84,18 @@ public class SimpleHttpServer {
     Files.createDirectories(folder);
     Files.writeString(folder.resolve("request.txt"), req);
     System.err.println("[POST FOLDER] Created: " + folder.getFileName());
+  }
+  
+  static int extractContentLength(String headers) {
+    for (String line : headers.split("\\r?\\n")) {
+      if (line.toLowerCase().startsWith("content-length:")) {
+        try {
+          return Integer.parseInt(line.substring(15).trim());
+        } catch (NumberFormatException e) {
+          return 0;
+        }
+      }
+    }
+    return 0;
   }
 }
