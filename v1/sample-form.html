@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <form id="f">
+        Name: <input name="name" id="name"><br>
+        Date: <input name="date" id="date"> dd-mm-yyyy<br>
+        Comment:<br>
+        <textarea name="comment" id="comment" rows="4" cols="40"></textarea><br>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function isValidDate(d) {
+            if (!/^\d{2}-\d{2}-\d{4}$/.test(d)) return false;
+            const [dd, mm, yyyy] = d.split("-").map(Number);
+            const dt = new Date(yyyy, mm - 1, dd);
+            return dt.getFullYear() === yyyy &&
+                dt.getMonth() === mm - 1 &&
+                dt.getDate() === dd;
+        }
+
+        function submitForm() {
+            const name = document.getElementById("name").value.trim();
+            const date = document.getElementById("date").value.trim();
+            const comment = document.getElementById("comment").value;
+
+            if (!isValidDate(date)) {
+                alert("Invalid date. Use dd-mm-yyyy");
+                return;
+            }
+
+            const body =
+                "name=" + encodeURIComponent(name) +
+                "&date=" + encodeURIComponent(date) +
+                "&comment=" + encodeURIComponent(comment);
+
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "client-key": "SDLKAS2323KD"
+                },
+                body: body
+            })
+                .then(r => r.text())
+                .then(t => document.getElementById("result").innerText = t);
+        }
+    </script>
+
+</body>
+
+</html>

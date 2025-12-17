@@ -1,0 +1,9 @@
+#!/bin/sh
+PORT=${1:-8080}
+PID=$(lsof -ti:$PORT)
+if [ -z "$PID" ]; then
+  echo "No process listening on port $PORT"
+else
+  kill -9 $PID
+  echo "Killed process $PID on port $PORT"
+fi

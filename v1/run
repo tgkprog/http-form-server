@@ -1,0 +1,4 @@
+#!/bin/sh
+mvn -q dependency:build-classpath -Dmdep.outputFile=cp.txt
+CP=$(cat cp.txt)
+java -cp "target/classes:$CP" demo.SimpleHttpServer

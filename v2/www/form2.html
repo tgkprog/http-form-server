@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Multipart Form</title>
+    <link rel="stylesheet" href="res/site.css">
+    <script src="validate.js"></script>
+</head>
+
+<body>
+    <h1>Multipart POST Form (File Upload)</h1>
+    <form method='post' enctype='multipart/form-data' onsubmit="event.preventDefault();">
+
+        <input id="name" name='name' placeholder='Name'> <br>
+        <input id="date" name='date' placeholder='Date'> dd-mm-yyyy<br>
+        <textarea id="comment" name='comment' placeholder='Comment'></textarea><br>
+
+        File 1 (optional) <input type='file' name='f1'><br>
+        File 2 (optional) <input type='file' name='f2'><br>
+
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+
+    <div id="result"></div>
+</body>
+
+</html>
